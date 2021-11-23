@@ -1,15 +1,18 @@
+import {AuthenticationComponent} from '@loopback/authentication';
+import {SECURITY_SCHEME_SPEC} from '@loopback/authentication-jwt';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
+import {RepositoryMixin} from '@loopback/repository';
+import {RestApplication} from '@loopback/rest';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
-import {RepositoryMixin} from '@loopback/repository';
-import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
+import dotenv from 'dotenv';
 import path from 'path';
 import {MySequence} from './sequence';
-import dotenv from 'dotenv'
+import {MyJWTAuthenticationComponent} from './services/jwt-authentication';
 
 dotenv.config();
 
@@ -23,6 +26,10 @@ export class TodoWebApi extends BootMixin(
 
     // Set up the custom sequence
     this.sequence(MySequence);
+
+    // Bind migration component related elements
+    this.component(AuthenticationComponent);
+    this.component(MyJWTAuthenticationComponent);
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
@@ -43,5 +50,21 @@ export class TodoWebApi extends BootMixin(
         nested: true,
       },
     };
+
+    this.addSecuritySpec();
+  }
+
+  addSecuritySpec(): void {
+    this.api({
+      openapi: '3.0.0',
+      info: {
+        title: 'TODO API',
+        version: '1.0.0',
+      },
+      paths: {},
+      components: {securitySchemes: SECURITY_SCHEME_SPEC},
+      security: [{jwt: []}],
+      servers: [{url: '/'}],
+    });
   }
 }

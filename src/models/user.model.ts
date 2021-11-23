@@ -1,3 +1,4 @@
+import { RoleEnum } from './../enums/role-enum';
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
@@ -28,8 +29,11 @@ export class User extends Entity {
 
   @property({
     type: 'string',
+    jsonSchema: {
+      enum: Object.values(RoleEnum)
+    }
   })
-  role?: string;
+  role?: RoleEnum;
 
   @property({
     type: 'boolean',

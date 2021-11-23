@@ -1,21 +1,16 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {Task} from '../models';
 import {TaskRepository} from '../repositories';
@@ -26,6 +21,7 @@ export class TaskController {
     public taskRepository : TaskRepository,
   ) {}
 
+  @authenticate('jwt')
   @post('/tasks')
   @response(200, {
     description: 'Task model instance',
