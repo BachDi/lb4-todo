@@ -2,6 +2,7 @@ import {AuthenticationComponent} from '@loopback/authentication';
 import {SECURITY_SCHEME_SPEC} from '@loopback/authentication-jwt';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
+import {CronComponent} from '@loopback/cron';
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {
@@ -11,6 +12,7 @@ import {
 import {ServiceMixin} from '@loopback/service-proxy';
 import dotenv from 'dotenv';
 import path from 'path';
+import * as CronJobs from './cronjobs';
 import {MySequence} from './sequence';
 import {MyJWTAuthenticationComponent} from './services/jwt-authentication';
 
@@ -51,7 +53,14 @@ export class TodoWebApi extends BootMixin(
       },
     };
 
+    Object.entries(CronJobs).forEach(([_key, value]) => {
+      const cronJob = value;
+      this.add(cronJob);
+    });
+
     this.addSecuritySpec();
+
+    this.component(CronComponent);
   }
 
   addSecuritySpec(): void {
