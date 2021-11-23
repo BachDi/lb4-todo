@@ -1,0 +1,10 @@
+{
+  "watch": [
+    "src"
+  ],
+  "ignore": [
+    "dist/*"
+  ],
+  "ext": "ts",
+  "exec": "npm start"
+}
