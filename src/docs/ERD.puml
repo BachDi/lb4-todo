@@ -1,0 +1,72 @@
+@startuml Todo
+hide circle
+' skinparam linetype ortho
+entity Task {
+  -id: ObjectID <<generated>>
+  --
+  ~projectId: ObjectID
+  ~assigneeTo: ObjectID
+  ~createdBy: ObjectID
+  ~parentId: ObjectID
+  --
+  *name: string
+  isCreatedByAdmin: boolean
+  description: string
+  isActive: boolean
+  isDeleted: boolean
+  startDate: Date
+  completedDate: Date
+  priority: "low" |  "normal" | "high"
+  status: "todo" | "doing" | "done"
+  dueDate: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity ProjectUser {
+  ~projectId: ObjectID
+  ~userId: ObjectID
+  --
+  startDate: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity Project {
+  -id: ObjectID <<generated>>
+  --
+  ~manageBy: ObjectID
+  ~createdBy: ObjectID
+  ~updatedBy: ObjectID
+  --
+  *name: string
+  description: string
+  isActive: boolean
+  isDeleted: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity User {
+  -id: ObjectID <<generated>>
+  --
+  email: string
+  *password: string
+  *username: string
+  name: string
+  role: "user" | "admin"
+  isActive: boolean
+  isDeleted: boolean
+  avatarURL: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+User||--o{Task
+Task||--||Task
+
+Project||--o{Task
+Project||--o{ProjectUser
+User||--o{ProjectUser
+
+@enduml
