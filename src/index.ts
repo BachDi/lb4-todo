@@ -1,9 +1,9 @@
-import {ApplicationConfig, StarterApplication} from './application';
+import {ApplicationConfig, TodoWebApi} from './application';
 
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
-  const app = new StarterApplication(options);
+  const app = new TodoWebApi(options);
   await app.boot();
   await app.start();
 

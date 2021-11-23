@@ -1,10 +1,10 @@
-import {StarterApplication} from './application';
+import {TodoWebApi} from './application';
 
 export async function migrate(args: string[]) {
   const existingSchema = args.includes('--rebuild') ? 'drop' : 'alter';
   console.log('Migrating schemas (%s existing schema)', existingSchema);
 
-  const app = new StarterApplication();
+  const app = new TodoWebApi();
   await app.boot();
   await app.migrateSchema({existingSchema});
 

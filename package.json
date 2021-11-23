@@ -1,7 +1,7 @@
 {
-  "name": "todo",
+  "name": "todo-web-api",
   "version": "0.0.1",
-  "description": "Getting started tutorial",
+  "description": "A simple todo app",
   "keywords": [
     "loopback-application",
     "loopback"
@@ -22,11 +22,9 @@
     "eslint": "lb-eslint --report-unused-disable-directives .",
     "eslint:fix": "npm run eslint -- --fix",
     "pretest": "npm run rebuild",
-    "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
     "posttest": "npm run lint",
-    "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && npm run posttest",
-    "docker:build": "docker build -t todo .",
-    "docker:run": "docker run -p 3000:3000 -d todo",
+    "docker:build": "docker build -t todo-web-api .",
+    "docker:run": "docker run -p 3000:3000 -d todo-web-api",
     "premigrate": "npm run build",
     "migrate": "node ./dist/migrate",
     "preopenapi-spec": "npm run build",

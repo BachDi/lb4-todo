@@ -1,4 +1,4 @@
-@startuml Todo
+ @startuml Todo
 hide circle
 ' skinparam linetype ortho
 entity Task {
@@ -50,7 +50,6 @@ entity Project {
 entity User {
   -id: ObjectID <<generated>>
   --
-  email: string
   *password: string
   *username: string
   name: string
