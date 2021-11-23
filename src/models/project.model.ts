@@ -34,6 +34,7 @@ export class Project extends Entity {
 
   @property({
     type: 'date',
+    default: () => new Date(),
   })
   createdAt?: string;
 
