@@ -9,6 +9,9 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 export {ApplicationConfig};
 
