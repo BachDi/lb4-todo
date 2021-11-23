@@ -15,13 +15,13 @@ import {
 import {Task} from '../models';
 import {TaskRepository} from '../repositories';
 
+@authenticate('jwt')
 export class TaskController {
   constructor(
     @repository(TaskRepository)
     public taskRepository : TaskRepository,
   ) {}
 
-  @authenticate('jwt')
   @post('/tasks')
   @response(200, {
     description: 'Task model instance',
