@@ -1,6 +1,6 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
-import {User} from './user.model';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Project} from './project.model';
+import {User} from './user.model';
 
 @model()
 export class Task extends Entity {
@@ -32,6 +32,12 @@ export class Task extends Entity {
     default: true,
   })
   isActive?: boolean;
+
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  isDeleted?: boolean;
 
   @property({
     type: 'date',
