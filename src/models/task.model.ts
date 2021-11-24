@@ -1,6 +1,6 @@
 import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {Project} from './project.model';
-import {User} from './user.model';
+import { Project, ProjectWithRelations } from './project.model';
+import { User, UserWithRelations } from './user.model';
 
 @model()
 export class Task extends Entity {
@@ -88,7 +88,7 @@ export class Task extends Entity {
   @belongsTo(() => Project)
   projectId: string;
 
-  @belongsTo(() => Task)
+  @belongsTo(() => Task, {name: 'parent'})
   parentId: string;
 
   constructor(data?: Partial<Task>) {
@@ -98,6 +98,10 @@ export class Task extends Entity {
 
 export interface TaskRelations {
   // describe navigational properties here
+  assignee?: UserWithRelations
+  creator?: UserWithRelations
+  project?: ProjectWithRelations
+  parent?: TaskWithRelations
 }
 
 export type TaskWithRelations = Task & TaskRelations;

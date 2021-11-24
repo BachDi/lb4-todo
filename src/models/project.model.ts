@@ -1,4 +1,7 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {ProjectUserWithRelations, TaskWithRelations} from '.';
+import {ProjectUser} from './project-user.model';
+import {Task} from './task.model';
 
 @model()
 export class Project extends Entity {
@@ -44,6 +47,11 @@ export class Project extends Entity {
   })
   updatedAt?: string;
 
+  @hasMany(() => ProjectUser)
+  projectUsers: ProjectUser[];
+
+  @hasMany(() => Task)
+  tasks: Task[];
 
   constructor(data?: Partial<Project>) {
     super(data);
@@ -52,6 +60,8 @@ export class Project extends Entity {
 
 export interface ProjectRelations {
   // describe navigational properties here
+  projectUsers?: ProjectUserWithRelations[]
+  tasks?: TaskWithRelations[]
 }
 
 export type ProjectWithRelations = Project & ProjectRelations;
