@@ -13,6 +13,13 @@ export class User extends Entity {
   })
   id?: string;
 
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  username: string;
+
   @property({
     type: 'string',
     hidden: true,
@@ -20,11 +27,6 @@ export class User extends Entity {
   })
   password: string;
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  username: string;
 
   @property({
     type: 'string',

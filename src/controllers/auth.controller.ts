@@ -9,7 +9,7 @@ import {
   getModelSchemaRef,
   HttpErrors,
   post,
-  requestBody,
+  requestBody
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {pick} from 'lodash';
@@ -22,7 +22,7 @@ import {
   MyUserService,
   PasswordHasherBindings,
   TokenServiceBindings,
-  UserServiceBindings,
+  UserServiceBindings
 } from '../services/jwt-authentication';
 import {validateCredentials} from '../services/validator';
 import {CredentialsRequestBody} from '../types/credential-schema';
@@ -96,9 +96,6 @@ export class AuthController {
             schema: {
               type: 'object',
               properties: {
-                userId: {
-                  type: 'number',
-                },
                 token: {
                   type: 'string',
                 },
@@ -111,11 +108,11 @@ export class AuthController {
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{userId: string; token: string}> {
+  ): Promise<{token: string}> {
     const user = await this.userService.verifyCredentials(credentials);
     const userProfile = this.userService.convertToUserProfile(user);
     const token = await this.jwtService.generateToken(userProfile);
-    return Promise.resolve({userId: userProfile.id, token: token});
+    return Promise.resolve({token});
   }
 
   @get('/auth/me', {

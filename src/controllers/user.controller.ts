@@ -1,31 +1,30 @@
 import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
+import {BcryptHasher} from '../services/hash-password';
+import {PasswordHasherBindings} from '../services/jwt-authentication';
 
 @authenticate('jwt')
 export class UserController {
   constructor(
     @repository(UserRepository)
     public userRepository : UserRepository,
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public hasher: BcryptHasher,
   ) {}
 
   @post('/users')
@@ -94,7 +93,13 @@ export class UserController {
     user: User,
     @param.where(User) where?: Where<User>,
   ): Promise<Count> {
-    return this.userRepository.updateAll(user, where);
+    const userData = {
+      ...user,
+    }
+    if (userData?.password) {
+      userData.password = await this.hasher.hashPassword(userData.password);
+    }
+    return this.userRepository.updateAll(userData, where);
   }
 
   @get('/users/{id}')
@@ -128,7 +133,13 @@ export class UserController {
     })
     user: User,
   ): Promise<void> {
-    await this.userRepository.updateById(id, user);
+    const userData = {
+      ...user,
+    }
+    if (userData?.password) {
+      userData.password = await this.hasher.hashPassword(userData.password);
+    }
+    await this.userRepository.updateById(id, userData);
   }
 
   @put('/users/{id}')
