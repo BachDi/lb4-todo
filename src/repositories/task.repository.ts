@@ -1,9 +1,9 @@
-import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, BelongsToAccessor} from '@loopback/repository';
+import {Getter, inject} from '@loopback/core';
+import {BelongsToAccessor, DefaultCrudRepository, repository} from '@loopback/repository';
 import {MongoDbDataSource} from '../datasources';
-import {Task, TaskRelations, User, Project} from '../models';
-import {UserRepository} from './user.repository';
+import {Project, Task, TaskRelations, User} from '../models';
 import {ProjectRepository} from './project.repository';
+import {UserRepository} from './user.repository';
 
 export class TaskRepository extends DefaultCrudRepository<
   Task,
@@ -20,10 +20,14 @@ export class TaskRepository extends DefaultCrudRepository<
   public readonly parent: BelongsToAccessor<Task, typeof Task.prototype.id>;
 
   constructor(
-    @inject('datasources.MongoDB') dataSource: MongoDbDataSource, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>, @repository.getter('TaskRepository') protected taskRepositoryGetter: Getter<TaskRepository>,
+    @inject('datasources.MongoDB') dataSource: MongoDbDataSource, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>,
   ) {
     super(Task, dataSource);
-    this.parent = this.createBelongsToAccessorFor('parent', taskRepositoryGetter,);
+    // this.parent = this.createBelongsToAccessorFor('parent', taskRepositoryGetter,);
+    this.parent = this.createBelongsToAccessorFor(
+      'parent',
+      Getter.fromValue(this),
+    ); // for recursive relationship
     this.registerInclusionResolver('parent', this.parent.inclusionResolver);
     this.project = this.createBelongsToAccessorFor('project', projectRepositoryGetter,);
     this.registerInclusionResolver('project', this.project.inclusionResolver);
