@@ -21,7 +21,7 @@ import {
   requestBody,
   response
 } from '@loopback/rest';
-import {SecurityBindings} from '@loopback/security';
+import {SecurityBindings, securityId} from '@loopback/security';
 import set from 'lodash/set';
 import {Task} from '../models';
 import {TaskRepository} from '../repositories';
@@ -34,7 +34,7 @@ export class TaskController {
   constructor(
     @repository(TaskRepository)
     public taskRepository: TaskRepository,
-  ) {}
+  ) { }
 
   @post('/tasks')
   @response(200, {
@@ -58,7 +58,9 @@ export class TaskController {
     task: Omit<Task, 'id' | 'isCreatedByAdmin'>,
   ): Promise<Task> {
     const role: RoleEnum = currentUserProfile?.role ?? RoleEnum.USER;
+    const userId: string = currentUserProfile?.id;
     set(task, 'isCreatedByAdmin', role === RoleEnum.ADMIN)
+    set(task, 'createdBy', userId);
     return this.taskRepository.create(task);
   }
 
@@ -89,9 +91,15 @@ export class TaskController {
     currentUserProfile: MyUserProfile,
     @param.filter(Task) filter?: Filter<Task>,
   ): Promise<Task[]> {
-    const role: RoleEnum = currentUserProfile?.role ?? RoleEnum.USER;
-    const tasks: TaskWithRelations[] = await this.taskRepository.find(filter);
-    return (role === RoleEnum.ADMIN) ? tasks : tasks.filter((task) => !task?.isCreatedByAdmin);
+    const role: RoleEnum = currentUserProfile?.role ?? RoleEnum.USER
+    const userId: string = currentUserProfile[securityId]
+    const tasks: TaskWithRelations[] = await this.taskRepository.find(filter)
+    return role === RoleEnum.ADMIN
+      ? tasks
+      : tasks.filter(
+          task =>
+            !task?.isCreatedByAdmin || String(task?.assigneeTo) === userId,
+        );
   }
 
   @patch('/tasks')
@@ -129,12 +137,13 @@ export class TaskController {
     @param.path.string('id') id: string,
     @param.filter(Task, {exclude: 'where'}) filter?: FilterExcludingWhere<Task>,
   ): Promise<Task> {
-    const role: RoleEnum = currentUserProfile?.role ?? RoleEnum.USER;
+    const role: RoleEnum = currentUserProfile.role ?? RoleEnum.USER;
+    const userId: string = currentUserProfile[securityId];
     const task: TaskWithRelations = await this.taskRepository.findById(
       id,
       filter,
     );
-    if (role !== RoleEnum.ADMIN && task.isCreatedByAdmin) {
+    if (role !== RoleEnum.ADMIN && task?.isCreatedByAdmin && task?.assigneeTo !== userId) {
       throw new HttpErrors.Unauthorized('This task can not be seen by user');
     }
     return task;
